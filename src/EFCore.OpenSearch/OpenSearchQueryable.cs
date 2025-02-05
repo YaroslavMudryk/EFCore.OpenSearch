@@ -9,6 +9,7 @@ public class OpenSearchQueryable<T> : IQueryable<T>, IAsyncEnumerable<T>
     private readonly OpenSearchQueryProvider<T> _provider;
     private readonly Expression _expression;
     private QueryContainer _externalQuery;
+    private AggregationDictionary _aggregations;
 
     public OpenSearchQueryable(OpenSearchQueryProvider<T> provider, Expression expression = null)
     {
@@ -30,9 +31,19 @@ public class OpenSearchQueryable<T> : IQueryable<T>, IAsyncEnumerable<T>
         return _externalQuery;
     }
 
+    public void SetAggregations(AggregationDictionary aggregations)
+    {
+        _aggregations = aggregations;
+    }
+
+    public AggregationDictionary GetAggregations()
+    {
+        return _aggregations;
+    }
+
     public IEnumerator<T> GetEnumerator()
     {
-        return ((IEnumerable<T>)_provider.Execute(_expression)).GetEnumerator();
+        return ((IEnumerable<T>)_provider.Execute(_expression)!).GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
