@@ -17,9 +17,7 @@ public class OpenSearchQueryProvider<T> : IAsyncQueryProvider
 
     public IQueryable CreateQuery(Expression expression)
     {
-        var elementType = expression.Type.GetGenericArguments().First();
-        var queryableType = typeof(OpenSearchQueryable<>).MakeGenericType(elementType);
-        return (IQueryable)Activator.CreateInstance(queryableType, new object[] { this, expression })!;
+        return new OpenSearchQueryable<T>(this, expression);
     }
 
     public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
@@ -29,26 +27,26 @@ public class OpenSearchQueryProvider<T> : IAsyncQueryProvider
 
     public object? Execute(Expression expression)
     {
-        return ExecuteQuery(expression);
+        return ExecuteQuery(expression, null);
     }
 
     public TResult Execute<TResult>(Expression expression)
     {
-        return (TResult)ExecuteQuery(expression);
+        return (TResult)ExecuteQuery(expression, null);
     }
 
     public TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken = default)
     {
-        return ExecuteQueryAsync<TResult>(expression, cancellationToken).GetAwaiter().GetResult();
+        return ExecuteQueryAsync<TResult>(expression, null, cancellationToken).GetAwaiter().GetResult();
     }
 
-    private object ExecuteQuery(Expression expression)
+    private object ExecuteQuery(Expression expression, QueryContainer? externalQuery)
     {
-        var queryDsl = OpenSearchExpressionTranslator.Translate(expression, out int? skip, out int? take, out var selectedFields, out var sortDescriptor, out var trackTotalHits);
-
+        var internalQuery = OpenSearchExpressionTranslator.Translate(expression, out int? skip, out int? take, out var selectedFields, out var sortDescriptor, out bool trackTotalHits);
+        
         var searchRequest = new SearchRequest(_indexName)
         {
-            Query = queryDsl,
+            Query = externalQuery ?? internalQuery,
             From = skip,
             Size = take,
             Sort = (IList<ISort>)sortDescriptor,
@@ -74,13 +72,13 @@ public class OpenSearchQueryProvider<T> : IAsyncQueryProvider
         return response.Documents;
     }
 
-    private async Task<TResult> ExecuteQueryAsync<TResult>(Expression expression, CancellationToken cancellationToken)
+    private async Task<TResult> ExecuteQueryAsync<TResult>(Expression expression, QueryContainer? externalQuery, CancellationToken cancellationToken)
     {
-        var queryDsl = OpenSearchExpressionTranslator.Translate(expression, out int? skip, out int? take, out var selectedFields, out var sortDescriptor, out var trackTotalHits);
+        var internalQuery = OpenSearchExpressionTranslator.Translate(expression, out int? skip, out int? take, out var selectedFields, out var sortDescriptor, out bool trackTotalHits);
 
         var searchRequest = new SearchRequest(_indexName)
         {
-            Query = queryDsl,
+            Query = externalQuery ?? internalQuery,
             From = skip,
             Size = take,
             Sort = (IList<ISort>)sortDescriptor,

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using OpenSearch.Client;
+using System.Collections;
 using System.Linq.Expressions;
 
 namespace EFCore.OpenSearch;
@@ -7,6 +8,7 @@ public class OpenSearchQueryable<T> : IQueryable<T>, IAsyncEnumerable<T>
 {
     private readonly OpenSearchQueryProvider<T> _provider;
     private readonly Expression _expression;
+    private QueryContainer _externalQuery;
 
     public OpenSearchQueryable(OpenSearchQueryProvider<T> provider, Expression expression = null)
     {
@@ -17,6 +19,16 @@ public class OpenSearchQueryable<T> : IQueryable<T>, IAsyncEnumerable<T>
     public Type ElementType => typeof(T);
     public Expression Expression => _expression;
     public IQueryProvider Provider => _provider;
+
+    public void SetExternalQuery(QueryContainer query)
+    {
+        _externalQuery = query;
+    }
+
+    public QueryContainer GetExternalQuery()
+    {
+        return _externalQuery;
+    }
 
     public IEnumerator<T> GetEnumerator()
     {
