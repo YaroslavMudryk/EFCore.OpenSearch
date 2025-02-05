@@ -7,7 +7,7 @@
 ## 🌟 Overview
 
 This package integrates **OpenSearch** with **Entity Framework Core**, allowing you to use `DbContext` API with OpenSearch.  
-It supports **LINQ queries**, **CRUD operations**, **full-text search**, **custom `QueryContainer` injection**, and more!
+It supports **LINQ queries**, **CRUD operations**, **full-text search**, **custom `QueryContainer` injection**, **aggregations**, and more!
 
 ---
 
@@ -19,6 +19,8 @@ It supports **LINQ queries**, **CRUD operations**, **full-text search**, **custo
 ✅ **Custom OpenSearch Queries (`QueryContainer`) injection**  
 ✅ **Track total hits** (`Count()` and `LongCount()` enable `TrackTotalHits = true`)  
 ✅ **Fluent API for index configuration**  
+✅ **Standalone Aggregation Queries (`AggregateAsync<T>()`)**  
+✅ **Query String Extraction (`GetQueryString()`)**  
 
 ---
 
@@ -71,7 +73,7 @@ Create your custom `DbContext` that extends `OpenSearchDbContext`:
 ```csharp
 public class MyOpenSearchDbContext : OpenSearchDbContext
 {
-    public MyOpenSearchDbContext(DbContextOptions<MyOpenSearchDbContext> options)
+    public MyOpenSearchDbContext(DbContextOptions<MyOpenSearchDbContext> options) 
         : base(options) { }
 
     public DbSet<User> Users => Set<User>();
@@ -109,47 +111,28 @@ var users = await context.Users
     .ToListAsync();
 ```
 
-### **Inserting Data**
+### **Standalone Aggregation Query**
 ```csharp
-var newUser = new User { Id = 1, Name = "John Doe", Age = 30 };
-context.Users.Add(newUser);
-await context.SaveChangesAsync();
-```
-
-### **Updating Data**
-```csharp
-var user = await context.Users.FirstOrDefaultAsync(u => u.Id == 1);
-user.Name = "John Updated";
-await context.SaveChangesAsync();
-```
-
-### **Deleting Data**
-```csharp
-var user = await context.Users.FirstOrDefaultAsync(u => u.Id == 1);
-context.Users.Remove(user);
-await context.SaveChangesAsync();
-```
-
-### **Counting Documents (`TrackTotalHits = true`)**
-```csharp
-var totalUsers = await context.Users.CountAsync();
-Console.WriteLine($"Total users: {totalUsers}");
-```
-
-### **Using a Custom OpenSearch Query (`QueryContainer`)**
-```csharp
-var query = new BoolQuery
+var aggregationDictionary = new AggregationDictionary
 {
-    Must = new List<QueryContainer>
-    {
-        new MatchQuery { Field = "name", Query = "John" },
-        new RangeQuery { Field = "age", GreaterThan = 18 }
-    }
+    { "averageAge", new AverageAggregation("averageAge", "age") },
+    { "userCount", new ValueCountAggregation("userCount", "id") }
 };
 
-var users = await context.Users
-    .WithQuery(query) // Injecting custom OpenSearch Query
-    .ToListAsync();
+var stats = await context.Users
+    .AggregateAsync<User, AgeStatistics>(aggregationDictionary);
+
+Console.WriteLine($"Average Age: {stats.AverageAge}");
+Console.WriteLine($"Total Users: {stats.UserCount}");
+```
+
+### **Retrieving Query String for Debugging**
+```csharp
+var queryString = context.Users
+    .Where(u => u.Age > 18)
+    .GetQueryString();
+
+Console.WriteLine(queryString);
 ```
 
 ---
@@ -173,7 +156,7 @@ Contributions are welcome! Feel free to submit issues and pull requests.
 ---
 
 ## 📫 **Contact**
-For support, reach out via [GitHub Issues](https://github.com/your-repo/issues).
+For support, reach out via [GitHub Issues](https://github.com/YaroslavMudryk/EFCore.OpenSearch/issues).
 
 ---
 
