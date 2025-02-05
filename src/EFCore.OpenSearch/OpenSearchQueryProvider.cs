@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
 using OpenSearch.Client;
+using OpenSearch.Net;
 using System.Linq.Expressions;
 
 namespace EFCore.OpenSearch;
@@ -58,6 +59,8 @@ public class OpenSearchQueryProvider<T> : IAsyncQueryProvider
             searchRequest.Source = new Union<bool, ISourceFilter>(new SourceFilter { Includes = selectedFields.ToArray() });
         }
 
+        var queryString = _client.SourceSerializer.SerializeToString(searchRequest);
+
         var response = _client.Search<object>(searchRequest);
         if (!response.IsValid)
         {
@@ -89,6 +92,8 @@ public class OpenSearchQueryProvider<T> : IAsyncQueryProvider
         {
             searchRequest.Source = new Union<bool, ISourceFilter>(new SourceFilter { Includes = selectedFields.ToArray() });
         }
+
+        var queryString = _client.SourceSerializer.SerializeToString(searchRequest);
 
         var response = await _client.SearchAsync<object>(searchRequest, cancellationToken);
         if (!response.IsValid)

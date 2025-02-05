@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "EFCore.OpenSearch.Example": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

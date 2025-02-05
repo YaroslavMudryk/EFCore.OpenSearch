@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore.OpenSearch", "EFCore.OpenSearch\EFCore.OpenSearch.csproj", "{36BE1FAE-DFC1-4BF4-8F68-B63A91935D13}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore.OpenSearch.Tests", "EFCore.OpenSearch.Tests\EFCore.OpenSearch.Tests.csproj", "{7D69BEB4-AC7A-4088-A91F-A9D50EEC8E97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore.OpenSearch.Example", "EFCore.OpenSearch.Example\EFCore.OpenSearch.Example.csproj", "{827B86D9-0F9E-4DCA-88B2-F1A4273BE0B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{36BE1FAE-DFC1-4BF4-8F68-B63A91935D13}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36BE1FAE-DFC1-4BF4-8F68-B63A91935D13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36BE1FAE-DFC1-4BF4-8F68-B63A91935D13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D69BEB4-AC7A-4088-A91F-A9D50EEC8E97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D69BEB4-AC7A-4088-A91F-A9D50EEC8E97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D69BEB4-AC7A-4088-A91F-A9D50EEC8E97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D69BEB4-AC7A-4088-A91F-A9D50EEC8E97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{827B86D9-0F9E-4DCA-88B2-F1A4273BE0B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{827B86D9-0F9E-4DCA-88B2-F1A4273BE0B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{827B86D9-0F9E-4DCA-88B2-F1A4273BE0B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{827B86D9-0F9E-4DCA-88B2-F1A4273BE0B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
